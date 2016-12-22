@@ -561,6 +561,7 @@ class MethodDispatcherTransform(EnvTransform):
     def _delegate_to_assigned_value(self, node, function, arg_list, kwargs):
         assignment = function.cf_state[0]
         value = assignment.rhs
+        needs_none_check = value.may_be_none()
         if value.is_name:
             if not value.entry or len(value.entry.cf_assignments) > 1:
                 # the variable might have been reassigned => play safe
@@ -569,8 +570,14 @@ class MethodDispatcherTransform(EnvTransform):
             if not value.obj.entry or len(value.obj.entry.cf_assignments) > 1:
                 # the underlying variable might have been reassigned => play safe
                 return node
+            # already checked at the assignment location
+            needs_none_check = False
         else:
             return node
+
+        if not needs_none_check:
+            value = value.clone_node()
+            value.needs_none_check = False
         return self._dispatch_to_handler(
             node, value, arg_list, kwargs)
 

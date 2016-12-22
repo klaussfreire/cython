@@ -2848,6 +2848,7 @@ class OptimizeBuiltinCalls(Visitor.NodeRefCleanupMixin,
             "__Pyx_PyDict_GetItemDefault", self.Pyx_PyDict_GetItem_func_type,
             'get', is_unbound_method, args,
             may_return_none = True,
+            with_none_check = getattr(function, 'needs_none_check', True),
             utility_code = load_c_utility("dict_getitem_default"))
 
     Pyx_PyDict_SetDefault_func_type = PyrexTypes.CFuncType(
