@@ -512,7 +512,7 @@ PyObject *__Pyx_Coroutine_SendEx(__pyx_CoroutineObject *self, PyObject *value) {
         if (self->exc_traceback) {
             PyTracebackObject *tb = (PyTracebackObject *) self->exc_traceback;
             PyFrameObject *f = tb->tb_frame;
-            Py_CLEAR(f->f_back);
+            if (f != NULL && f->f_back != NULL) Py_CLEAR(f->f_back);
         }
 #endif
     } else {
